@@ -1,0 +1,19 @@
+{
+  "name": "toolbar-container-coloring",
+  "version": "0.2.3",
+  "description": "Addon colours the toolbar based on container color. Origional by n0rad",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "web-ext build -i assets/* --overwrite-dest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/HackerNCoder/firefox-container-color-toolbar"
+  },
+  "author": "HackerNCoder",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://gitlab.com/HackerNCoder/firefox-container-color-toolbar/issues"
+  },
+  "homepage": "https://gitlab.com/HackerNCoder/firefox-container-color-toolbar#readme"
+}

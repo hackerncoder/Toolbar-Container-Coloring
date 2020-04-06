@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "Toolbar Container Coloring",
+  "version": "0.2.3",
+  "description": "Black theme toolbar with container color. Addon colours the toolbar based on the tabs container color. Origional by n0rad",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "options_ui": {
+      "page": "options.html",
+      "browser_style": true
+  },
+  "permissions": [
+    "cookies",
+    "theme",
+    "contextualIdentities",
+    "tabs",
+    "storage"
+  ],
+  "applications": {
+    "gecko": {
+      "id": "toolbar.container.coloring@hackerncoder.org",
+      "strict_min_version": "58.0"
+    }
+  },
+  "icons": {
+    "96": "img/containers.svg"
+  }
+}
