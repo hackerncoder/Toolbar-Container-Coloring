@@ -1,5 +1,5 @@
 # Toolbar-Container-Coloring
-Addon that colours the toolbar based on the tabs container color. 
+Addon that colors the toolbar based on the tabs container color. 
 
 [Mozilla addons](https://addons.mozilla.org/en-US/firefox/addon/toolbar-container-coloring/)
 
