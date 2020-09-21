@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    <title>Toolbar Container Coloring</title>
 </head>
 
 <body>
-  <div id="optionsArea">
-    Should this addon also colour the urlbar?
-    <select id="urlBox">
-      <option value="0">Yes</option>
-      <option value="1">No</option>
-    </select>
-  </div>
-  <script src="options.js"></script>
+	<form>
+		<h1>Settings</h1>
+		<hr/>
+
+	  	<p>
+	  		<label>
+				<input type="checkbox" id="urlBox" value="1">
+				Should this addon also colour the UrlBar?<br/>
+			</label>
+		</p>
+
+		<button type="submit">Save settings</button>
+	</form>
+	<script src="options.js"></script>
 </body>
 </html>

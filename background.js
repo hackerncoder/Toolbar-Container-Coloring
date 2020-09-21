@@ -20,14 +20,6 @@ const shadeBlendConvert = function (p, from, to) {
   else return "#"+(0x100000000+r((t[0]-f[0])*p+f[0])*0x1000000+r((t[1]-f[1])*p+f[1])*0x10000+r((t[2]-f[2])*p+f[2])*0x100+(f[3]>-1&&t[3]>-1?r(((t[3]-f[3])*p+f[3])*255):t[3]>-1?r(t[3]*255):f[3]>-1?r(f[3]*255):255)).toString(16).slice(1,f[3]>-1||t[3]>-1?undefined:-2);
 }
 
-var colorUrlBox = 1;
-
-function onGot(item) {
- if (item.urlBox) {
-   colorUrlBox = item.urlBox;
- }
-}
-
 class containersTheme {
   constructor() {
     browser.tabs.onActivated.addListener((activeInfo) => {
@@ -42,9 +34,8 @@ class containersTheme {
 
   async updateTabContainerTheme(tabId, windowId) {
 
-    let getting = browser.storage.sync.get("urlBox");
-    getting.then(onGot, null);
-
+    let extensionSettings = await browser.storage.sync.get();
+    
     var toolbarColor = "#323234";
     var tabLineColor = "#0A84FF";
     var urlfieldColor = "rgb(71, 71, 73)"
@@ -54,23 +45,23 @@ class containersTheme {
       var container = await browser.contextualIdentities.get(tab.cookieStoreId)
       toolbarColor = shadeBlendConvert(-0.6, container.colorCode)
       tabLineColor = toolbarColor;
-      if(colorUrlBox == 0) {
+      if(extensionSettings.urlBox) {
         urlfieldColor = toolbarColor
       }
     }
 
     browser.theme.update(windowId, {
-      images: {
-        headerURL: "",
-      },
+      //theme.images: {
+      //  theme_frame: "",
+      //},
       colors: {
-        frame: "#0C0C0D",
-        tab_background_text: "#eee",
+        frame: "hsl(238, 5%, 5%)", //"#0C0C0D",
+        tab_background_text: "rgb(249, 249, 250, 0.7", //"#eee",
         toolbar: toolbarColor,
         tab_line: tabLineColor,
-        textcolor: "rgb(249, 249, 250)",
+        //textcolor: "rgb(249, 249, 250)", //Replaced with tab_background_text
         icons: "rgb(249, 249, 250, 0.7)",
-        accentcolor: "hsl(240, 5%, 5%)",
+	//accentcolor: "hsl(238, 5%, 5%)", //Replaced with frame
         popup: "#4a4a4f",
         popup_text: "rgb(249, 249, 250)",
         popup_border: "#27272b",
