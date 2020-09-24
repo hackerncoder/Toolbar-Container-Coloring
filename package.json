@@ -1,6 +1,6 @@
 {
   "name": "toolbar-container-coloring",
-  "version": "0.2.3",
+  "version": "0.3",
   "description": "Addon colors the toolbar based on container color. Original by n0rad",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

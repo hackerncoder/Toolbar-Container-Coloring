@@ -20,8 +20,16 @@ const shadeBlendConvert = function (p, from, to) {
   else return "#"+(0x100000000+r((t[0]-f[0])*p+f[0])*0x1000000+r((t[1]-f[1])*p+f[1])*0x10000+r((t[2]-f[2])*p+f[2])*0x100+(f[3]>-1&&t[3]>-1?r(((t[3]-f[3])*p+f[3])*255):t[3]>-1?r(t[3]*255):f[3]>-1?r(f[3]*255):255)).toString(16).slice(1,f[3]>-1||t[3]>-1?undefined:-2);
 }
 
+var curThemeToolbar;
+var curThemetabLine;
+var curThemeToolbarfield;
+var lastContainerColor;
+var themeInfo;
+
 class containersTheme {
   constructor() {
+    this.getCurrentTheme();
+    browser.theme.onUpdated.addListener(this.getCurrentTheme);
     browser.tabs.onActivated.addListener((activeInfo) => {
       this.updateTabContainerTheme(activeInfo.tabId, activeInfo.windowId);
     });
@@ -32,91 +40,39 @@ class containersTheme {
             currentCookieStore == "firefox-private");
   }
 
-  async updateTabContainerTheme(tabId, windowId) {
-
-    let extensionSettings = await browser.storage.sync.get();
-    
-    var toolbarColor = "#323234";
-    var tabLineColor = "#0A84FF";
-    var urlfieldColor = "rgb(71, 71, 73)"
-    var tab = await browser.tabs.get(tabId);
-
-    if (!this.isUnpaintedTheme(tab.cookieStoreId)) {
-      var container = await browser.contextualIdentities.get(tab.cookieStoreId)
-      toolbarColor = shadeBlendConvert(-0.6, container.colorCode)
-      tabLineColor = toolbarColor;
-      if(extensionSettings.urlBox) {
-        urlfieldColor = toolbarColor
+  async getCurrentTheme() {
+    themeInfo = await browser.theme.getCurrent();
+    if (themeInfo.colors != null) {
+      if (themeInfo.colors.toolbar != lastContainerColor && themeInfo.colors.toolbar != curThemeToolbar) {
+        curThemeToolbar = themeInfo.colors.toolbar; //"#323234";
+        curThemetabLine = themeInfo.colors.tab_line; //"#0A84FF";
+        curThemeToolbarfield = themeInfo.colors.toolbar_field; //"rgb(71, 71, 73)"
       }
     }
+  }
 
-    browser.theme.update(windowId, {
-      //theme.images: {
-      //  theme_frame: "",
-      //},
-      colors: {
-        frame: "hsl(238, 5%, 5%)", //"#0C0C0D",
-        tab_background_text: "rgb(249, 249, 250, 0.7", //"#eee",
-        toolbar: toolbarColor,
-        tab_line: tabLineColor,
-        //textcolor: "rgb(249, 249, 250)", //Replaced with tab_background_text
-        icons: "rgb(249, 249, 250, 0.7)",
-	//accentcolor: "hsl(238, 5%, 5%)", //Replaced with frame
-        popup: "#4a4a4f",
-        popup_text: "rgb(249, 249, 250)",
-        popup_border: "#27272b",
-        toolbar_bottom_separator: "hsl(240, 5%, 5%)",
-        toolbar_field_border: "rgba(249, 249, 250, 0.2)",
-        toolbar_field_separator: "#5F6670",
-        ntp_background: "#2A2A2E",
-        ntp_text: "rgb(249, 249, 250)",
-        sidebar: "#38383D",
-        sidebar_text: "rgb(249, 249, 250)",
-        //toolbar_field: "rgb(71, 71, 73)",
-        toolbar_field: urlfieldColor,
-        toolbar_field_text: "rgb(249, 249, 250)"
+  async updateTabContainerTheme(tabId, windowId) {
 
-        // accentcolor: "#333",​
-        // textcolor: "#c2c2c2",
-        // toolbar: toolbarColor,
-        // toolbar_field: "#333",
-        // toolbar_field_text: null,
+    if (themeInfo.colors == null) { return; }
 
-        // bookmark_text: null,
-        // button_background_active: "#f00",
-        // button_background_hover: null,
-        // frame: null,
-        // frame_inactive: null,
-        // icons: null,
-        // icons_attention: null,
-        // ntp_background: null,
-        // ntp_text: null,
-        // popup: null,
-        // popup_border: null,
-        // popup_highlight: null,
-        // popup_highlight_text: null,
-        // popup_text: null,
-        // sidebar: null,
-        // sidebar_highlight: null,
-        // sidebar_highlight_text: null,
-        // sidebar_text: null,
-        // tab_background_separator: "#f00",
-        // tab_background_text: null,
-        // tab_loading: null,
-        // tab_selected: null,
-        // tab_text: null,
-        // toolbar_bottom_separator: null,
-        // toolbar_field_border: null,
-        // toolbar_field_border_focus: null,
-        // toolbar_field_focus: null,
-        // toolbar_field_separator: null,
-        // toolbar_field_text_focus: null,
-        // toolbar_text: "#dcdcdc",
-        // toolbar_top_separator: null,
-        // toolbar_vertical_separator: null
+    let extensionSettings = await browser.storage.sync.get();
+
+    var tab = await browser.tabs.get(tabId);
+    if (!this.isUnpaintedTheme(tab.cookieStoreId)) {
+      var container = await browser.contextualIdentities.get(tab.cookieStoreId);
+      var toolbarColor = shadeBlendConvert(-0.6, container.colorCode);
+      lastContainerColor = toolbarColor;
+      themeInfo.colors.toolbar = toolbarColor;
+      themeInfo.colors.tab_line = toolbarColor;
+      if(extensionSettings.urlBox) {
+        themeInfo.colors.toolbar_field = toolbarColor;
       }
-    });
-
+    } else {
+      themeInfo.colors.toolbar = curThemeToolbar;
+      themeInfo.colors.tab_line = curThemetabLine;
+      themeInfo.colors.toolbar_field = curThemeToolbarfield;
+    }
+    browser.theme.update(windowId, themeInfo);
   }
 }
 

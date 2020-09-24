@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Toolbar Container Coloring",
-  "version": "0.2.4",
+  "version": "0.3",
   "description": "Black theme toolbar with container color. Addon colors the toolbar based on the tabs container color. Origional by n0rad",
   "background": {
     "scripts": ["background.js"]

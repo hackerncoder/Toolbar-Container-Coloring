@@ -1,14 +1,13 @@
 function saveOptions(e) {
 	e.preventDefault();
 
-	browser.storage.sync.set({
-		"urlBox": document.querySelector("#urlBox").checked
-	});
+	browser.storage.sync.set({"urlBox": document.querySelector("#urlBox").checked});
 
-	browser.runtime.reload();
+	//browser.runtime.reload();
 }
 
 function onOptionsPageLoaded() {
+
 	var storageItem = browser.storage.sync.get();
 	storageItem.then((res) =>
 	{
