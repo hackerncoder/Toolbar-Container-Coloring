@@ -20,11 +20,7 @@ const shadeBlendConvert = function (p, from, to) {
   else return "#"+(0x100000000+r((t[0]-f[0])*p+f[0])*0x1000000+r((t[1]-f[1])*p+f[1])*0x10000+r((t[2]-f[2])*p+f[2])*0x100+(f[3]>-1&&t[3]>-1?r(((t[3]-f[3])*p+f[3])*255):t[3]>-1?r(t[3]*255):f[3]>-1?r(f[3]*255):255)).toString(16).slice(1,f[3]>-1||t[3]>-1?undefined:-2);
 }
 
-var curThemeToolbar;
-var curThemetabLine;
-var curThemeToolbarfield;
-var lastContainerColor;
-var themeInfo;
+var theme;
 
 class containersTheme {
   constructor() {
@@ -41,12 +37,10 @@ class containersTheme {
   }
 
   async getCurrentTheme() {
-    themeInfo = await browser.theme.getCurrent();
-    if (themeInfo.colors != null) {
-      if (themeInfo.colors.toolbar != lastContainerColor && themeInfo.colors.toolbar != curThemeToolbar) {
-        curThemeToolbar = themeInfo.colors.toolbar; //"#323234";
-        curThemetabLine = themeInfo.colors.tab_line; //"#0A84FF";
-        curThemeToolbarfield = themeInfo.colors.toolbar_field; //"rgb(71, 71, 73)"
+    newTheme = await browser.theme.getCurrent();
+    if (newTheme.colors != null) {
+      if (newTheme.colors.toolbar != theme.colors.toolbar) {
+        theme = newTheme
       }
     }
   }
@@ -56,21 +50,18 @@ class containersTheme {
     if (themeInfo.colors == null) { return; }
 
     let extensionSettings = await browser.storage.sync.get();
-
+    
     var tab = await browser.tabs.get(tabId);
+    var themeInfo = theme
     if (!this.isUnpaintedTheme(tab.cookieStoreId)) {
       var container = await browser.contextualIdentities.get(tab.cookieStoreId);
       var toolbarColor = shadeBlendConvert(-0.6, container.colorCode);
-      lastContainerColor = toolbarColor;
+      themeInfo.colors.toolbar = toolbarColor
       themeInfo.colors.toolbar = toolbarColor;
       themeInfo.colors.tab_line = toolbarColor;
       if(extensionSettings.urlBox) {
         themeInfo.colors.toolbar_field = toolbarColor;
       }
-    } else {
-      themeInfo.colors.toolbar = curThemeToolbar;
-      themeInfo.colors.tab_line = curThemetabLine;
-      themeInfo.colors.toolbar_field = curThemeToolbarfield;
     }
     browser.theme.update(windowId, themeInfo);
   }
